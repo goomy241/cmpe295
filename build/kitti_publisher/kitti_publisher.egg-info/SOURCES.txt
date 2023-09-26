@@ -1,0 +1,13 @@
+package.xml
+setup.cfg
+setup.py
+kitti_publisher/__init__.py
+kitti_publisher/kitti_publisher.py
+kitti_publisher.egg-info/PKG-INFO
+kitti_publisher.egg-info/SOURCES.txt
+kitti_publisher.egg-info/dependency_links.txt
+kitti_publisher.egg-info/entry_points.txt
+kitti_publisher.egg-info/requires.txt
+kitti_publisher.egg-info/top_level.txt
+kitti_publisher.egg-info/zip-safe
+resource/kitti_publisher

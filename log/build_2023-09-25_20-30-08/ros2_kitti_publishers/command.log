@@ -1,0 +1,6 @@
+Invoking command in '/home/evan/cmpe295/build/ros2_kitti_publishers': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/evan/cmpe295/src/ros2KittiPub -DCMAKE_INSTALL_PREFIX=/home/evan/cmpe295/install/ros2_kitti_publishers
+Invoked command in '/home/evan/cmpe295/build/ros2_kitti_publishers' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/evan/cmpe295/src/ros2KittiPub -DCMAKE_INSTALL_PREFIX=/home/evan/cmpe295/install/ros2_kitti_publishers
+Invoking command in '/home/evan/cmpe295/build/ros2_kitti_publishers': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/evan/cmpe295/build/ros2_kitti_publishers -- -j20 -l20
+Invoked command in '/home/evan/cmpe295/build/ros2_kitti_publishers' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/evan/cmpe295/build/ros2_kitti_publishers -- -j20 -l20
+Invoking command in '/home/evan/cmpe295/build/ros2_kitti_publishers': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/evan/cmpe295/build/ros2_kitti_publishers
+Invoked command in '/home/evan/cmpe295/build/ros2_kitti_publishers' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/evan/cmpe295/build/ros2_kitti_publishers
