@@ -1,8 +1,0 @@
-In file included from [01m[K/home/evan/cmpe295/kitti_publisher/src/node/kitti_publishers_node.cpp:3[m[K:
-[01m[K/home/evan/cmpe295/kitti_publisher/src/node/ros2_kitti_publishers/kitti_publishers_node.hpp:46:10:[m[K [01;31m[Kfatal error: [m[Kros2_kitti_publishers/visibility.h: No such file or directory
-   46 | #include [01;31m[K"ros2_kitti_publishers/visibility.h"[m[K
-      |          [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
-compilation terminated.
-gmake[2]: *** [CMakeFiles/kitti_publisher.dir/build.make:76: CMakeFiles/kitti_publisher.dir/src/node/kitti_publishers_node.cpp.o] Error 1
-gmake[1]: *** [CMakeFiles/Makefile2:139: CMakeFiles/kitti_publisher.dir/all] Error 2
-gmake: *** [Makefile:146: all] Error 2

@@ -1,2 +1,0 @@
-Invoking command in '/home/evan/cmpe295/build/kitti_publisher': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/evan/cmpe295/build/kitti_publisher -- -j20 -l20
-Invoked command in '/home/evan/cmpe295/build/kitti_publisher' returned '2': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/evan/cmpe295/build/kitti_publisher -- -j20 -l20

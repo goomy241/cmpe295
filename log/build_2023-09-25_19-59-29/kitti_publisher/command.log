@@ -1,6 +1,0 @@
-Invoking command in '/home/evan/cmpe295/build/kitti_publisher': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/evan/cmpe295/kitti_publisher -DCMAKE_INSTALL_PREFIX=/home/evan/cmpe295/install/kitti_publisher
-Invoked command in '/home/evan/cmpe295/build/kitti_publisher' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/evan/cmpe295/kitti_publisher -DCMAKE_INSTALL_PREFIX=/home/evan/cmpe295/install/kitti_publisher
-Invoking command in '/home/evan/cmpe295/build/kitti_publisher': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/evan/cmpe295/build/kitti_publisher -- -j20 -l20
-Invoked command in '/home/evan/cmpe295/build/kitti_publisher' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/evan/cmpe295/build/kitti_publisher -- -j20 -l20
-Invoking command in '/home/evan/cmpe295/build/kitti_publisher': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/evan/cmpe295/build/kitti_publisher
-Invoked command in '/home/evan/cmpe295/build/kitti_publisher' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/evan/cmpe295/build/kitti_publisher

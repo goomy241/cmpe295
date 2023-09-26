@@ -1,3 +1,0 @@
-[0mCMake Error: The source directory "/home/evan/cmpe295/kitti_publisher" does not exist.
-Specify --help for usage, or press the help button on the CMake GUI.[0m
-gmake: *** [Makefile:308: cmake_check_build_system] Error 1

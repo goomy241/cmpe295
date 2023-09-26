@@ -1,3 +1,0 @@
-[console_scripts]
-kitti_publisher = kitti_publisher.kitti_publisher:main
-

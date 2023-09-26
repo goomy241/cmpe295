@@ -1,5 +1,0 @@
-[0.007s] Invoking command in '/home/evan/cmpe295/build/kitti_publisher': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/evan/cmpe295/build/kitti_publisher -- -j20 -l20
-[0.017s] [0mCMake Error: The source directory "/home/evan/cmpe295/kitti_publisher" does not exist.
-[0.017s] Specify --help for usage, or press the help button on the CMake GUI.[0m
-[0.018s] gmake: *** [Makefile:308: cmake_check_build_system] Error 1
-[0.019s] Invoked command in '/home/evan/cmpe295/build/kitti_publisher' returned '2': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/evan/cmpe295/build/kitti_publisher -- -j20 -l20
