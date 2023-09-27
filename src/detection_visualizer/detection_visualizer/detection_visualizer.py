@@ -42,7 +42,7 @@ class DetectionVisualizerNode(Node):
 
         self._image_pub = self.create_publisher(Image, '/dbg_images', output_image_qos)
 
-        self._image_sub = message_filters.Subscriber(self, Image, 'kitti/image/gray/left')
+        self._image_sub = message_filters.Subscriber(self, Image, 'kitti/image/color/left')
         self._detections_sub = message_filters.Subscriber(self, Detection2DArray, '/detections')
 
         self._synchronizer = message_filters.ApproximateTimeSynchronizer(
