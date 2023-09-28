@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 from ultralytics import YOLO
 import rclpy
 from rclpy.node import Node
@@ -9,6 +10,8 @@ from cv_bridge import CvBridge
 from custom_interfaces.msg import InferenceResult
 from custom_interfaces.msg import Yolov8Inference
 
+import torch
+
 bridge = CvBridge()
 
 class Yolov8_publisher(Node):
@@ -16,7 +19,12 @@ class Yolov8_publisher(Node):
     def __init__(self):
         super().__init__('Yolov8_publisher')
 
-        self.model = YOLO('yolov8n.pt')
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+
+        self.declare_parameter('model_path', current_dir + '/yolov8n.pt')
+        self.model_path = self.get_parameter('model_path').value
+
+        self.model = YOLO(self.model_path)
 
         self.yolov8_inference = Yolov8Inference()
 
@@ -27,13 +35,13 @@ class Yolov8_publisher(Node):
             10)
         self.subscription 
 
-        self.yolov8_pub = self.create_publisher(Yolov8Inference, "/Yolov8_Inference", 1)
-        self.img_pub = self.create_publisher(Image, "/inference_result", 1)
+        self.yolov8_pub = self.create_publisher(Yolov8Inference, "/Yolov8_Inference", 10)
+        self.img_pub = self.create_publisher(Image, "/inference_result", 10)
 
     def camera_callback(self, data):
 
         img = bridge.imgmsg_to_cv2(data, "bgr8")
-        results = self.model(img)
+        results = self.model(img, device=0) # cpu=cpu, gpu=0 
 
         # self.yolov8_inference.header.frame_id = "base_link"
         # self.yolov8_inference.header.stamp = camera_subscriber.get_clock().now().to_msg()

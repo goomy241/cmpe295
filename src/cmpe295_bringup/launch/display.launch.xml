@@ -2,12 +2,20 @@
     <let name="rviz_config_path"
          value="$(find-pkg-share cmpe295_bringup)/rviz/default.rviz" />
 
-     <let name="kitti_path"
+    <let name="kitti_path"
          value="$(find-pkg-share cmpe295_bringup)/kitti/2011_09_26/2011_09_26_drive_0001_sync" />
+
+    <let name="model_path"
+         value="$(find-pkg-share yolo_recognition)/yolov8n.pt" />
 
     <node pkg="ros2_kitti_publishers" exec="kitti_publishers">
         <param name="kitti_path"
                value="$(var kitti_path)" />
+    </node>
+
+    <node pkg="yolo_recognition" exec="yolov8_pub">
+        <param name="model_path"
+               value="$(var model_path)" />
     </node>
 
     <node pkg="rviz2" exec="rviz2" output="screen" 
