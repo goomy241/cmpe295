@@ -11,7 +11,8 @@ KittiPublishersNode::KittiPublishersNode()
 : Node("publisher_node"), file_index_(0)
 {
 
-  publisher_point_cloud_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("kitti/point_cloud", 10);
+  // publisher_point_cloud_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("kitti/point_cloud", 10);
+  publisher_point_cloud_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("pcl_pointcloud", 10);
   publisher_image_gray_left_ = this->create_publisher<sensor_msgs::msg::Image>("kitti/image/gray/left", 10);
   publisher_image_gray_right_ = this->create_publisher<sensor_msgs::msg::Image>("kitti/image/gray/right", 10);
   publisher_image_color_left_ = this->create_publisher<sensor_msgs::msg::Image>("kitti/image/color/left", 10);
@@ -101,7 +102,7 @@ void KittiPublishersNode::convert_pcl_to_pointcloud2(sensor_msgs::msg::PointClou
     }
 
     pcl::toROSMsg(cloud, msg);
-    msg.header.frame_id = "base_link";
+    msg.header.frame_id = "map";
     msg.header.stamp = now();
 }
 
@@ -202,7 +203,7 @@ void KittiPublishersNode::create_publishers_data_file_names()
 
 void KittiPublishersNode::prepare_navsatfix_msg(std::vector<std::string> &oxts_tokenized_array, sensor_msgs::msg::NavSatFix &msg)
 {
-  msg.header.frame_id = "base_link";
+  msg.header.frame_id = "map";
   msg.header.stamp = this->now();
 
   msg.status.service = sensor_msgs::msg::NavSatStatus::SERVICE_GPS;
@@ -238,7 +239,7 @@ void KittiPublishersNode::prepare_marker_array_msg(std::vector<std::string> &oxt
   visualization_msgs::msg::Marker RTK_MARKER;
 
   static int gps_track = 1;
-  RTK_MARKER.header.frame_id = "base_link";
+  RTK_MARKER.header.frame_id = "map";
   RTK_MARKER.header.stamp = this->now();
   RTK_MARKER.ns = "RTK_MARKER";
   RTK_MARKER.id = gps_track++; //unused
@@ -261,7 +262,7 @@ void KittiPublishersNode::prepare_marker_array_msg(std::vector<std::string> &oxt
 
 // https://github.com/iralabdisco/kitti_player/blob/public/src/kitti_player.cpp
 void KittiPublishersNode::prepare_imu_msg(std::vector<std::string> &oxts_tokenized_array, sensor_msgs::msg::Imu &msg){
-  msg.header.frame_id = "base_link";
+  msg.header.frame_id = "map";
   msg.header.stamp = now();
 
   //    - ax:      acceleration in x, i.e. in direction of vehicle front (m/s^2)
@@ -312,7 +313,7 @@ void KittiPublishersNode::convert_image_to_msg(sensor_msgs::msg::Image & msg, co
   size_t size = frame.step * frame.rows;
   msg.data.resize(size);
   memcpy(&msg.data[0], frame.data, size);
-  msg.header.frame_id = "base_link";
+  msg.header.frame_id = "map";
   msg.header.stamp = this->now();
 }
 
