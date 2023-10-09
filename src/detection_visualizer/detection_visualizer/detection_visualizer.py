@@ -1,30 +1,9 @@
-# Copyright 2019 Open Source Robotics Foundation, Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-import sys
-
-import cv2
-import cv_bridge
 import message_filters
 import rclpy
 from rclpy.node import Node
-from rclpy.qos import QoSDurabilityPolicy
-from rclpy.qos import QoSHistoryPolicy
-from rclpy.qos import QoSProfile
-from rclpy.qos import QoSReliabilityPolicy
-from sensor_msgs.msg import Image
-from vision_msgs.msg import Detection2DArray
+from sensor_msgs.msg import Image, PointCloud2, Imu, NavSatFix
+from vision_msgs.msg import Detection3DArray
+from visualization_msgs.msg import MarkerArray
 
 
 class DetectionVisualizerNode(Node):
@@ -32,59 +11,65 @@ class DetectionVisualizerNode(Node):
     def __init__(self):
         super().__init__('detection_visualizer')
 
-        self._bridge = cv_bridge.CvBridge()
+        # point cloud
+        self._pc_sub = message_filters.Subscriber(self, PointCloud2, '/kitti/point_cloud')
+        self._pc_pub = self.create_publisher(PointCloud2, '/synchronized/kitti/point_cloud', 10)
 
-        output_image_qos = QoSProfile(
-            history=QoSHistoryPolicy.KEEP_LAST,
-            durability=QoSDurabilityPolicy.TRANSIENT_LOCAL,
-            reliability=QoSReliabilityPolicy.RELIABLE,
-            depth=1)
+        # grey image left
+        self._g_image01_sub = message_filters.Subscriber(self, Image, '/kitti/image/gray/left')
+        self._g_image01_pub = self.create_publisher(Image, '/synchronized/kitti/image/gray/left', 10)
 
-        self._image_pub = self.create_publisher(Image, '/dbg_images', output_image_qos)
+        # grey image right
+        self._g_image02_sub = message_filters.Subscriber(self, Image, '/kitti/image/grey/right')
+        self._g_image02_pub = self.create_publisher(Image, '/synchronized/kitti/image/grey/right', 10)
 
-        self._image_sub = message_filters.Subscriber(self, Image, 'kitti/image/color/left')
-        self._detections_sub = message_filters.Subscriber(self, Detection2DArray, '/detections')
+        # color image left
+        self._c_image01_sub = message_filters.Subscriber(self, Image, '/kitti/image/color/left')
+        self._c_image01_pub = self.create_publisher(Image, '/synchronized/kitti/image/color/left', 10)
 
-        self._synchronizer = message_filters.ApproximateTimeSynchronizer(
-            (self._image_sub, self._detections_sub), 5, 0.01)
-        self._synchronizer.registerCallback(self.on_detections)
+        # color image right
+        self._c_image02_sub = message_filters.Subscriber(self, Image, '/kitti/image/color/right')
+        self._c_image02_pub = self.create_publisher(Image, '/synchronized/kitti/image/color/right', 10)
 
-    def on_detections(self, image_msg, detections_msg):
-        cv_image = self._bridge.imgmsg_to_cv2(image_msg)
+        # imu
+        self._imu_sub = message_filters.Subscriber(self, Imu, '/kitti/imu')
+        self._imu_pub = self.create_publisher(Imu, '/synchronized/kitti/imu', 10)
 
-        # Draw boxes on image
-        for detection in detections_msg.detections:
-            max_class = None
-            max_score = 0.0
-            for result in detection.results:
-                hypothesis = result.hypothesis
-                if hypothesis.score > max_score:
-                    max_score = hypothesis.score
-                    max_class = hypothesis.class_id
-            if max_class is None:
-                print("Failed to find class with highest score", file=sys.stderr)
-                return
+        # gps
+        self._gps_sub = message_filters.Subscriber(self, NavSatFix, '/kitti/nav_sat_fix')
+        self._gps_pub = self.create_publisher(NavSatFix, '/synchronized/kitti/nav_sat_fix', 10)
 
-            cx = detection.bbox.center.position.x
-            cy = detection.bbox.center.position.y
-            sx = detection.bbox.size_x
-            sy = detection.bbox.size_y
+        # marker array
+        self._marker_sub = message_filters.Subscriber(self, MarkerArray, '/kitti/marker_array')
+        self._marker_pub = self.create_publisher(MarkerArray, '/synchronized/kitti/marker_array', 10)
 
-            min_pt = (round(cx - sx / 2.0), round(cy - sy / 2.0))
-            max_pt = (round(cx + sx / 2.0), round(cy + sy / 2.0))
-            color = (0, 255, 0)
-            thickness = 1
-            cv2.rectangle(cv_image, min_pt, max_pt, color, thickness)
+        # yolov8 result
+        self._yolov8_result_sub = message_filters.Subscriber(self, Image, '/yolov8/result')
+        self._yolov8_result = self.create_publisher(Image, '/synchronized/yolov8/result', 10)
 
-            label = '{} {:.3f}'.format(max_class, max_score)
-            pos = (min_pt[0], max_pt[1])
-            font = cv2.FONT_HERSHEY_SIMPLEX
-            cv2.putText(cv_image, label, pos, font, 0.75, color, 1, cv2.LINE_AA)
-            
-        detection_image_msg = self._bridge.cv2_to_imgmsg(cv_image, encoding=image_msg.encoding)
-        detection_image_msg.header = image_msg.header
+        # pointpillars result
+        self.openpcdet_result_sub = message_filters.Subscriber(self, Detection3DArray, '/openpcdet/result')
+        self.openpcdet_result = self.create_publisher(Detection3DArray, '/synchronized/openpcdet/result', 10)
 
-        self._image_pub.publish(detection_image_msg)
+        self._pub_arr = [self._pc_pub, self._g_image01_pub, self._g_image02_pub, self._c_image01_pub, self._c_image02_pub, self._imu_pub, self._gps_pub, self._marker_pub, self._yolov8_result, self.openpcdet_result]
+
+        self._ts = message_filters.TimeSynchronizer(self._pub_arr, 10)
+        self._ts.registerCallback(self.on_detections)
+        
+
+    def on_detections(self, pc, g_image01, g_image02, c_image01, c_image02, imu, gps, marker, yolov8_result, openpcdet_result):
+        self.get_logger().info('Received synchronized messages')
+        self._pc_pub.publish(pc)
+        self._g_image01_pub.publish(g_image01)
+        self._g_image02_pub.publish(g_image02)
+        self._c_image01_pub.publish(c_image01)
+        self._c_image02_pub.publish(c_image02)
+        self._imu_pub.publish(imu)
+        self._gps_pub.publish(gps)
+        self._marker_pub.publish(marker)
+        self._yolov8_result.publish(yolov8_result)
+        self.openpcdet_result.publish(openpcdet_result)
+        
 
 
 def main():

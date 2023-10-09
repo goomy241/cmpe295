@@ -44,7 +44,7 @@ def generate_launch_description():
 
     declare_output_topic_cmd = DeclareLaunchArgument(
         'output_topic',
-        default_value='cloud_detections',
+        default_value='openpcdet/result',
         description='Output Object Detections'
     )
 

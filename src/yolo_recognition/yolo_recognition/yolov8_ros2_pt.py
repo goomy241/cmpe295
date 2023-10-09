@@ -35,8 +35,8 @@ class Yolov8_publisher(Node):
             10)
         self.subscription 
 
-        self.yolov8_pub = self.create_publisher(Yolov8Inference, "/Yolov8_Inference", 10)
-        self.img_pub = self.create_publisher(Image, "/inference_result", 10)
+        self.yolov8_pub = self.create_publisher(Yolov8Inference, "/yolov8/inference", 10)
+        self.img_pub = self.create_publisher(Image, "/yolov8/result", 10)
 
     def camera_callback(self, data):
 

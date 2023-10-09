@@ -9,16 +9,44 @@
      <let name="yolo_model_path"
           value="$(find-pkg-share yolo_recognition)/yolov8n.pt" />
 
-     <!-- mmdet3d parameter -->
-     <let name="config_file"
-         value="$(find-pkg-share mmdet3d_ros2)/pointpillars_hv_secfpn_8xb6-160e_kitti-3d-3class.py" />
+     <!-- openpcdet parameter -->
+     <let name="openpcdet_namespace"
+          value="" />
 
-     <let name="checkpoint_file"
-         value="$(find-pkg-share mmdet3d_ros2)//hv_pointpillars_secfpn_6x8_160e_kitti-3d-3class_20220301_150306-37dc2420.pth" />
+     <let name="openpcdet_config_file"
+         value="$(find-pkg-share pcdet_ros2)/config/pointpillars.param.yaml" />
 
-     <let name="score_threshold"
-         value=0.3 />
+     <let name="openpcdet_input_topic"
+          value="/kitti/point_cloud" />
 
+     <let name="openpcdet_output_topic"
+          value="/openpcdet/result" />
+
+     <let name="openpcdet_config_file"
+          value="cfgs/kitti_models/pointpillar.yaml" /> 
+     
+     <let name="openpcdet_model_file"
+          value="checkpoints/pointpillar_7728.pth" />
+     
+     <let name="openpcdet_allow_memory_fractioning"
+          value="False" />
+     
+     <let name="openpcdet_allow_score_thresholding"
+          value="True" />
+     
+     <let name="openpcdet_num_features"
+          value="4" />
+
+     <let name="openpcdet_device_id"
+          value="0" />
+     
+     <let name="openpcdet_device_memory_fraction"
+          value="6.0" />
+     
+     <let name="openpcdet_threshold_array"
+          value="[0.7, 0.35, 0.5]" />
+
+     <!-- Node section -->
      <node pkg="ros2_kitti_publishers" exec="kitti_publishers">
           <param name="kitti_path"
                value="$(var kitti_path)" />
@@ -27,6 +55,35 @@
      <node pkg="yolo_recognition" exec="yolov8_pub">
           <param name="model_path"
                value="$(var yolo_model_path)" />
+     </node>
+
+     <node pkg="pcdet_ros2" exec="pcdet">
+          <param name="package_folder_path"
+               value="$(find-pkg-share pcdet_ros2)" />
+          <param name="namespace"
+               value="$(var openpcdet_namespace)" />
+          <param name="params_file"
+               value="$(var openpcdet_config_file)" />
+          <param name="config_file"
+               value="$(var openpcdet_config_file)" />
+          <param name="model_file"
+               value="$(var openpcdet_model_file)" />
+          <param name="allow_memory_fractioning"
+               value="$(var openpcdet_allow_memory_fractioning)" />
+          <param name="allow_score_thresholding"
+               value="$(var openpcdet_allow_score_thresholding)" />
+          <param name="num_features"
+               value="$(var openpcdet_num_features)" />
+          <param name="device_id"
+               value="$(var openpcdet_device_id)" />
+          <param name="device_memory_fraction"
+               value="$(var openpcdet_device_memory_fraction)" />
+          <param name="threshold_array"
+               value="$(var openpcdet_threshold_array)" />
+          <remap from="input"
+               to="$(var openpcdet_input_topic)" />
+          <remap from="output"
+               to="$(var openpcdet_output_topic)" />
      </node>
 
      <node pkg="rviz2" exec="rviz2" output="screen" 
