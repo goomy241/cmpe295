@@ -10,7 +10,6 @@ Panels:
         - /Image_Gray_Right1/Topic1
         - /MarkerArray1/Namespaces1
         - /Image_yolov81/Topic1
-        - /pointpillars_result1/Status1
         - /pointpillars_result1/Namespaces1
       Splitter Ratio: 0.5
     Tree Height: 454
@@ -227,7 +226,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 63.595890045166016
+      Distance: 35.71147537231445
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -242,10 +241,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.3797968626022339
+      Pitch: 0.2947971224784851
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.1286520957946777
+      Yaw: 3.4886558055877686
     Saved: ~
 Window Geometry:
   Displays:

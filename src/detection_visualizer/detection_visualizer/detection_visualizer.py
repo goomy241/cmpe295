@@ -15,27 +15,27 @@ class DetectionVisualizerNode(Node):
         self._pc_sub = message_filters.Subscriber(self, PointCloud2, '/kitti/point_cloud')
         self._pc_pub = self.create_publisher(PointCloud2, '/synchronized/kitti/point_cloud', 10)
 
-        # grey image left
+        # # gray image left
         self._g_image01_sub = message_filters.Subscriber(self, Image, '/kitti/image/gray/left')
         self._g_image01_pub = self.create_publisher(Image, '/synchronized/kitti/image/gray/left', 10)
 
-        # grey image right
-        self._g_image02_sub = message_filters.Subscriber(self, Image, '/kitti/image/grey/right')
-        self._g_image02_pub = self.create_publisher(Image, '/synchronized/kitti/image/grey/right', 10)
+        # # gray image right
+        self._g_image02_sub = message_filters.Subscriber(self, Image, '/kitti/image/gray/right')
+        self._g_image02_pub = self.create_publisher(Image, '/synchronized/kitti/image/gray/right', 10)
 
-        # color image left
-        self._c_image01_sub = message_filters.Subscriber(self, Image, '/kitti/image/color/left')
+        # # color image left
+        self._c_image01_sub = message_filters.Subscriber(self, Image, 'kitti/image/color/left')
         self._c_image01_pub = self.create_publisher(Image, '/synchronized/kitti/image/color/left', 10)
 
-        # color image right
+        # # color image right
         self._c_image02_sub = message_filters.Subscriber(self, Image, '/kitti/image/color/right')
         self._c_image02_pub = self.create_publisher(Image, '/synchronized/kitti/image/color/right', 10)
 
-        # imu
+        # # imu
         self._imu_sub = message_filters.Subscriber(self, Imu, '/kitti/imu')
         self._imu_pub = self.create_publisher(Imu, '/synchronized/kitti/imu', 10)
 
-        # gps
+        # # gps
         self._gps_sub = message_filters.Subscriber(self, NavSatFix, '/kitti/nav_sat_fix')
         self._gps_pub = self.create_publisher(NavSatFix, '/synchronized/kitti/nav_sat_fix', 10)
 
@@ -45,20 +45,29 @@ class DetectionVisualizerNode(Node):
 
         # yolov8 result
         self._yolov8_result_sub = message_filters.Subscriber(self, Image, '/yolov8/result')
-        self._yolov8_result = self.create_publisher(Image, '/synchronized/yolov8/result', 10)
+        self._yolov8_result_pub = self.create_publisher(Image, '/synchronized/yolov8/result', 10)
 
-        # pointpillars result
+        # # pointpillars result
         self.openpcdet_result_sub = message_filters.Subscriber(self, Detection3DArray, '/openpcdet/result')
-        self.openpcdet_result = self.create_publisher(Detection3DArray, '/synchronized/openpcdet/result', 10)
+        self.openpcdet_result_pub = self.create_publisher(Detection3DArray, '/synchronized/openpcdet/result', 10)
 
-        self._pub_arr = [self._pc_pub, self._g_image01_pub, self._g_image02_pub, self._c_image01_pub, self._c_image02_pub, self._imu_pub, self._gps_pub, self._marker_pub, self._yolov8_result, self.openpcdet_result]
-
-        self._ts = message_filters.TimeSynchronizer(self._pub_arr, 10)
+        self._sub_arr = [
+                         self._pc_sub, 
+                         self._g_image01_sub, 
+                         self._g_image02_sub, 
+                         self._c_image01_sub, 
+                         self._c_image02_sub, 
+                         self._imu_sub, 
+                         self._gps_sub,
+                        #  self._marker_sub, # no header in marker array
+                         self._yolov8_result_sub, 
+                         self.openpcdet_result_sub
+                         ]
+        self._ts = message_filters.ApproximateTimeSynchronizer(self._sub_arr, 10, 1, allow_headerless=True)
         self._ts.registerCallback(self.on_detections)
-        
+    
 
-    def on_detections(self, pc, g_image01, g_image02, c_image01, c_image02, imu, gps, marker, yolov8_result, openpcdet_result):
-        self.get_logger().info('Received synchronized messages')
+    def on_detections(self, pc, g_image01, g_image02, c_image01, c_image02, imu, gps, yolov8_result, openpcdet_result):
         self._pc_pub.publish(pc)
         self._g_image01_pub.publish(g_image01)
         self._g_image02_pub.publish(g_image02)
@@ -66,13 +75,17 @@ class DetectionVisualizerNode(Node):
         self._c_image02_pub.publish(c_image02)
         self._imu_pub.publish(imu)
         self._gps_pub.publish(gps)
-        self._marker_pub.publish(marker)
-        self._yolov8_result.publish(yolov8_result)
-        self.openpcdet_result.publish(openpcdet_result)
+        # self._marker_pub.publish(marker)
+        self._yolov8_result_pub.publish(yolov8_result)
+        self.openpcdet_result_pub.publish(openpcdet_result)
         
 
 
 def main():
     rclpy.init()
-    rclpy.spin(DetectionVisualizerNode())
+    detection_visualizer = DetectionVisualizerNode()
+    rclpy.spin(detection_visualizer)
     rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()

@@ -73,8 +73,9 @@ class PCDetROS(Node):
                 allow_publishing = self.__getPubState__(int(types[i]), scores[i])
                 if(allow_publishing):
                     det = Detection3D()
-                    det.header.frame_id = cloud_msg.header.frame_id
-                    det.header.stamp = cloud_msg.header.stamp
+                    # det.header.frame_id = "base_link"
+                    # det.header.stamp = self.get_clock().now().to_msg()
+                    det.header = cloud_msg.header
                     quat = self.__yawToQuaternion__(float(dt_box_lidar[i][6]))
                     det.bbox.center.orientation.x = quat[1]
                     det.bbox.center.orientation.y = quat[2]
@@ -94,8 +95,9 @@ class PCDetROS(Node):
                     det.results.append(hypothesis)
                     out_msg.detections.append(det)
         
-        out_msg.header.frame_id = cloud_msg.header.frame_id
-        out_msg.header.stamp = cloud_msg.header.stamp
+        # out_msg.header.frame_id = "base_link"
+        # out_msg.header.stamp = self.get_clock().now().to_msg()
+        out_msg.header = cloud_msg.header
 
         if len(out_msg.detections) != 0:
             self.__pub_det__.publish(out_msg)

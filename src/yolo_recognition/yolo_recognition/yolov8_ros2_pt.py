@@ -43,9 +43,9 @@ class Yolov8_publisher(Node):
         img = bridge.imgmsg_to_cv2(data, "bgr8")
         results = self.model(img, device=0) # cpu=cpu, gpu=0 
 
-        # self.yolov8_inference.header.frame_id = "base_link"
-        # self.yolov8_inference.header.stamp = camera_subscriber.get_clock().now().to_msg()
-        self.yolov8_inference.header = data.header
+        self.yolov8_inference.header.frame_id = "base_link"
+        self.yolov8_inference.header.stamp = self.get_clock().now().to_msg()
+        # self.yolov8_inference.header = data.header
 
 
         for r in results:
@@ -64,7 +64,8 @@ class Yolov8_publisher(Node):
             #camera_subscriber.get_logger().info(f"{self.yolov8_inference}")
 
         annotated_frame = results[0].plot()
-        img_msg = bridge.cv2_to_imgmsg(annotated_frame)  
+        img_msg = bridge.cv2_to_imgmsg(annotated_frame)
+        img_msg.header = data.header
 
         self.img_pub.publish(img_msg)
         self.yolov8_pub.publish(self.yolov8_inference)
