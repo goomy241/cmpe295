@@ -107,7 +107,7 @@ void KittiPublishersNode::convert_pcl_to_pointcloud2(sensor_msgs::msg::PointClou
 
 void KittiPublishersNode::init_file_path()
 {
-    this->declare_parameter<std::string>("kitti_path", "/home/evan/cmpe295/src/cmpe295_bringup/kitti/2011_09_26/2011_09_26_drive_0001_sync");
+    this->declare_parameter<std::string>("kitti_path", "/home/zhicheng/Desktop/cmpe295/src/cmpe295_bringup/kitti/2011_09_26/2011_09_26_drive_0001_sync");
     kitti_path_ = this->get_parameter("kitti_path").as_string();
     path_point_cloud_ = kitti_path_ + "/velodyne_points/data/";
     path_point_cloud_ = kitti_path_ + "/velodyne_points/data/";
