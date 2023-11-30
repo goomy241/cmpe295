@@ -30,7 +30,7 @@ class Yolov8_publisher(Node):
 
         self.subscription = self.create_subscription(
             Image,
-            'kitti/image/color/left',
+            'nuscenes/CAM_FRONT/image',
             self.camera_callback,
             10)
         self.subscription 
@@ -40,7 +40,7 @@ class Yolov8_publisher(Node):
 
     def camera_callback(self, data):
 
-        img = bridge.imgmsg_to_cv2(data, "bgr8")
+        img = bridge.imgmsg_to_cv2(data, "8UC3")
         results = self.model(img, device=0) # cpu=cpu, gpu=0 
 
         self.yolov8_inference.header.frame_id = "base_link"

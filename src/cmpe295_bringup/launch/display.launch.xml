@@ -47,10 +47,10 @@
           value="[0.7, 0.35, 0.5]" />
 
      <!-- Node section -->
-     <node pkg="ros2_kitti_publishers" exec="kitti_publishers">
+     <!-- <node pkg="ros2_kitti_publishers" exec="kitti_publishers">
           <param name="kitti_path"
                value="$(var kitti_path)" />
-     </node>
+     </node> -->
 
      <node pkg="yolo_recognition" exec="yolov8_pub">
           <param name="model_path"
