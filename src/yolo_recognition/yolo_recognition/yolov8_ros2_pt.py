@@ -68,7 +68,6 @@ class Yolov8_publisher(Node):
         # Publish inference results directly without using the inference_topic variable
         self.yolov8_publishers[channel].publish(yolov8_inference)
 
-        # Optionally, you can also publish the annotated image
         img_msg = bridge.cv2_to_imgmsg(results[0].plot())
         img_msg.header = data.header
         self.create_publisher(Image, f'/yolov8/result/{channel}', 10).publish(img_msg)

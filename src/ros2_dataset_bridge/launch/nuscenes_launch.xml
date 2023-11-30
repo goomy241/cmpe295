@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-    <let name="NUSCENES_DIR" value="/home/student/temp_ws/data/nuscenes"/>
+    <let name="NUSCENES_DIR" value="/home/evan/cmpe295/data/nuscenes"/>
     <let name="NUSCENES_VER" value="v1.0-mini"/>
     <let name="UPDATE_FREQUENCY" value="4.0"/>
 

@@ -17,7 +17,7 @@
          value="$(find-pkg-share pcdet_ros2)/config/pointpillars.param.yaml" />
 
      <let name="openpcdet_input_topic"
-          value="/kitti/point_cloud" />
+          value="/nuscenes/LIDAR_TOP/data" />
 
      <let name="openpcdet_output_topic"
           value="/openpcdet/result" />

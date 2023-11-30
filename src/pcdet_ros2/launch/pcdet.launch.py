@@ -38,7 +38,7 @@ def generate_launch_description():
 
     declare_input_topic_cmd = DeclareLaunchArgument(
         'input_topic',
-        default_value='/kitti/point_cloud',
+        default_value='/nuscenes/LIDAR_TOP/data',
         description='Input Point Cloud'
     )
 
