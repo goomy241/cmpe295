@@ -12,40 +12,44 @@ class DetectionVisualizerNode(Node):
         super().__init__('detection_visualizer')
 
         # point cloud
-        self._pc_sub = message_filters.Subscriber(self, PointCloud2, '/kitti/point_cloud')
-        self._pc_pub = self.create_publisher(PointCloud2, '/synchronized/kitti/point_cloud', 10)
+        self._pc_sub = message_filters.Subscriber(self, PointCloud2, '/nuscenes/LIDAR_TOP/data')
+        self._pc_pub = self.create_publisher(PointCloud2, '/synchronized/nuscenes/LIDAR_TOP/data', 10)
 
-        # gray image left
-        self._g_image01_sub = message_filters.Subscriber(self, Image, '/kitti/image/gray/left')
-        self._g_image01_pub = self.create_publisher(Image, '/synchronized/kitti/image/gray/left', 10)
+        # yolo back left
+        self._g_image01_sub = message_filters.Subscriber(self, Image, '/yolov8/result/CAM_BACK_LEFT')
+        self._g_image01_pub = self.create_publisher(Image, '/synchronized/result/CAM_BACK_LEFT', 10)
 
-        # gray image right
-        self._g_image02_sub = message_filters.Subscriber(self, Image, '/kitti/image/gray/right')
-        self._g_image02_pub = self.create_publisher(Image, '/synchronized/kitti/image/gray/right', 10)
+        # yolo front left
+        self._g_image02_sub = message_filters.Subscriber(self, Image, '/yolov8/result/CAM_FRONT_LEFT')
+        self._g_image02_pub = self.create_publisher(Image, '/synchronized/result/CAM_FRONT_LEFT', 10)
 
-        # color image left
-        self._c_image01_sub = message_filters.Subscriber(self, Image, 'kitti/image/color/left')
-        self._c_image01_pub = self.create_publisher(Image, '/synchronized/kitti/image/color/left', 10)
+        # yolo back right
+        self._c_image01_sub = message_filters.Subscriber(self, Image, '/yolov8/result/CAM_BACK_RIGHT')
+        self._c_image01_pub = self.create_publisher(Image, '/synchronized/result/CAM_BACK_RIGHT', 10)
 
-        # color image right
-        self._c_image02_sub = message_filters.Subscriber(self, Image, '/kitti/image/color/right')
-        self._c_image02_pub = self.create_publisher(Image, '/synchronized/kitti/image/color/right', 10)
+        # yolo front right
+        self._c_image02_sub = message_filters.Subscriber(self, Image, '/yolov8/result/CAM_FRONT_RIGHT')
+        self._c_image02_pub = self.create_publisher(Image, '/synchronized/result/CAM_FRONT_RIGHT', 10)
+
+        # yolo back
+        self._c_image01_sub = message_filters.Subscriber(self, Image, '/yolov8/result/CAM_BACK')
+        self._c_image01_pub = self.create_publisher(Image, '/synchronized/result/CAM_BACK', 10)
+
+        # yolo front
+        self._c_image02_sub = message_filters.Subscriber(self, Image, '/yolov8/result/CAM_FRONT')
+        self._c_image02_pub = self.create_publisher(Image, '/synchronized/result/CAM_FRONT', 10)
 
         # imu
-        self._imu_sub = message_filters.Subscriber(self, Imu, '/kitti/imu')
-        self._imu_pub = self.create_publisher(Imu, '/synchronized/kitti/imu', 10)
+        # self._imu_sub = message_filters.Subscriber(self, Imu, '/kitti/imu')
+        # self._imu_pub = self.create_publisher(Imu, '/synchronized/kitti/imu', 10)
 
         # gps
-        self._gps_sub = message_filters.Subscriber(self, NavSatFix, '/kitti/nav_sat_fix')
-        self._gps_pub = self.create_publisher(NavSatFix, '/synchronized/kitti/nav_sat_fix', 10)
+        # self._gps_sub = message_filters.Subscriber(self, NavSatFix, '/kitti/nav_sat_fix')
+        # self._gps_pub = self.create_publisher(NavSatFix, '/synchronized/kitti/nav_sat_fix', 10)
 
         # marker array
         self._marker_sub = message_filters.Subscriber(self, MarkerArray, '/kitti/marker_array')
         self._marker_pub = self.create_publisher(MarkerArray, '/synchronized/kitti/marker_array', 10)
-
-        # yolov8 result
-        self._yolov8_result_sub = message_filters.Subscriber(self, Image, '/yolov8/result')
-        self._yolov8_result_pub = self.create_publisher(Image, '/synchronized/yolov8/result', 10)
 
         # pointpillars result
         self.openpcdet_result_sub = message_filters.Subscriber(self, Detection3DArray, '/openpcdet/result')

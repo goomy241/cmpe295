@@ -71,7 +71,7 @@ class NuscenesVisualizeNode(object):
         self.update_frequency = self.ros_interface.get_parameter("UPDATE_FREQUENCY").get_parameter_value().double_value
 
 
-        self.ros_interface.create_publisher(MarkerArray, "/nuscenes/bboxes", 1)
+        self.ros_interface.create_publisher(MarkerArray, "/nuscenes/bboxes", 10)
         self.nusc_loader_helper = NuscenesLoader(version=self.nuscenes_version, dataroot=self.nuscenes_dir, verbose=True)
         self.nusc = self.nusc_loader_helper.get_nusc(logger=self.ros_interface.get_logger())
         
@@ -145,10 +145,10 @@ class NuscenesVisualizeNode(object):
         if is_publish_image:
             image_pub_name = f"{channel}_image_pub"
             if image_pub_name not in self.ros_interface.__pub_registry__:
-                self.ros_interface.create_publisher(Image, f"/nuscenes/{channel}/image", 1)
+                self.ros_interface.create_publisher(Image, f"/nuscenes/{channel}/image", 10)
             info_pub_name  = f"{channel}_info_pub"
             if info_pub_name not in self.ros_interface.__pub_registry__:
-                self.ros_interface.create_publisher(CameraInfo, f"/nuscenes/{channel}/camera_info", 1)
+                self.ros_interface.create_publisher(CameraInfo, f"/nuscenes/{channel}/camera_info", 10)
 
             image = cv2.imread(image_path)
             self.ros_interface.publish_image(image, cam_intrinsic, f"/nuscenes/{channel}/image", frame_id=channel)
@@ -188,7 +188,7 @@ class NuscenesVisualizeNode(object):
             point_cloud = np.fromfile(os.path.join(self.nuscenes_dir, lidar_data['filename']), dtype=np.float32).reshape(-1, 5)[:, :4]
             lidar_pub_name = 'lidar_pub'
             if lidar_pub_name not in self.ros_interface.__pub_registry__:
-                self.ros_interface.create_publisher(PointCloud2, "/nuscenes/LIDAR_TOP/data", 1)
+                self.ros_interface.create_publisher(PointCloud2, "/nuscenes/LIDAR_TOP/data", 10)
             self.ros_interface.publish_point_cloud(point_cloud, "/nuscenes/LIDAR_TOP/data", frame_id="LIDAR_TOP")
               
     def publish_callback(self):

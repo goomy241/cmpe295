@@ -2,7 +2,7 @@
 <launch>
     <let name="NUSCENES_DIR" value="/home/evan/cmpe295/data/nuscenes"/>
     <let name="NUSCENES_VER" value="v1.0-mini"/>
-    <let name="UPDATE_FREQUENCY" value="4.0"/>
+    <let name="UPDATE_FREQUENCY" value="8.0"/>
 
     <node pkg="ros2_dataset_bridge" exec="nuscenes_visualize_node" name="nuscenes_visualize_node" output="screen">
         <param name="NUSCENES_DIR" value="$(var NUSCENES_DIR)"/>

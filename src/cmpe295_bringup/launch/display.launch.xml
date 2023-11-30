@@ -47,15 +47,13 @@
           value="[0.7, 0.35, 0.5]" />
 
      <!-- Node section -->
-     <!-- <node pkg="ros2_kitti_publishers" exec="kitti_publishers">
-          <param name="kitti_path"
-               value="$(var kitti_path)" />
+     <!-- <node pkg="detection_visualizer" exec="detection_visualizer">
      </node> -->
 
-     <node pkg="yolo_recognition" exec="yolov8_pub">
+     <!-- <node pkg="yolo_recognition" exec="yolov8_pub">
           <param name="model_path"
                value="$(var yolo_model_path)" />
-     </node>
+     </node> -->
 
      <node pkg="pcdet_ros2" exec="pcdet">
           <param name="package_folder_path"

@@ -6,8 +6,9 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /Camera_back_right1
       Splitter Ratio: 0.5
-    Tree Height: 386
+    Tree Height: 95
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
@@ -136,7 +137,7 @@ Visualization Manager:
       Enabled: true
       Far Plane Distance: 100
       Image Rendering: background and overlay
-      Name: Camera
+      Name: Camera_front
       Overlay Alpha: 0.5
       Topic:
         Depth: 5
@@ -146,7 +147,11 @@ Visualization Manager:
         Value: /nuscenes/CAM_FRONT/image
       Value: true
       Visibility:
-        Camera: true
+        Camera_back: true
+        Camera_back_left: true
+        Camera_back_right: true
+        Camera_front_left: true
+        Camera_front_right: true
         Grid: true
         MarkerArray: true
         PointCloud2: true
@@ -157,7 +162,7 @@ Visualization Manager:
       Enabled: true
       Far Plane Distance: 100
       Image Rendering: background and overlay
-      Name: Camera
+      Name: Camera_front_left
       Overlay Alpha: 0.5
       Topic:
         Depth: 5
@@ -167,7 +172,11 @@ Visualization Manager:
         Value: /nuscenes/CAM_FRONT_LEFT/image
       Value: true
       Visibility:
-        Camera: true
+        Camera_back: true
+        Camera_back_left: true
+        Camera_back_right: true
+        Camera_front: true
+        Camera_front_right: true
         Grid: true
         MarkerArray: true
         PointCloud2: true
@@ -178,7 +187,7 @@ Visualization Manager:
       Enabled: true
       Far Plane Distance: 100
       Image Rendering: background and overlay
-      Name: Camera
+      Name: Camera_front_right
       Overlay Alpha: 0.5
       Topic:
         Depth: 5
@@ -188,7 +197,11 @@ Visualization Manager:
         Value: /nuscenes/CAM_FRONT_RIGHT/image
       Value: true
       Visibility:
-        Camera: true
+        Camera_back: true
+        Camera_back_left: true
+        Camera_back_right: true
+        Camera_front: true
+        Camera_front_left: true
         Grid: true
         MarkerArray: true
         PointCloud2: true
@@ -207,6 +220,81 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /nuscenes/bboxes
       Value: true
+    - Class: rviz_default_plugins/Camera
+      Enabled: true
+      Far Plane Distance: 100
+      Image Rendering: background and overlay
+      Name: Camera_back
+      Overlay Alpha: 0.5
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /nuscenes/CAM_BACK/image
+      Value: true
+      Visibility:
+        Camera_back_left: true
+        Camera_back_right: true
+        Camera_front: true
+        Camera_front_left: true
+        Camera_front_right: true
+        Grid: true
+        MarkerArray: true
+        PointCloud2: true
+        TF: true
+        Value: true
+      Zoom Factor: 1
+    - Class: rviz_default_plugins/Camera
+      Enabled: true
+      Far Plane Distance: 100
+      Image Rendering: background and overlay
+      Name: Camera_back_left
+      Overlay Alpha: 0.5
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /nuscenes/CAM_BACK_LEFT/image
+      Value: true
+      Visibility:
+        Camera_back: true
+        Camera_back_right: true
+        Camera_front: true
+        Camera_front_left: true
+        Camera_front_right: true
+        Grid: true
+        MarkerArray: true
+        PointCloud2: true
+        TF: true
+        Value: true
+      Zoom Factor: 1
+    - Class: rviz_default_plugins/Camera
+      Enabled: true
+      Far Plane Distance: 100
+      Image Rendering: background and overlay
+      Name: Camera_back_right
+      Overlay Alpha: 0.5
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /nuscenes/CAM_BACK_RIGHT/image
+      Value: true
+      Visibility:
+        Camera_back: true
+        Camera_back_left: true
+        Camera_front: true
+        Camera_front_left: true
+        Camera_front_right: true
+        Grid: true
+        MarkerArray: true
+        PointCloud2: true
+        TF: true
+        Value: true
+      Zoom Factor: 1
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -274,22 +362,32 @@ Visualization Manager:
       Yaw: 4.505398273468018
     Saved: ~
 Window Geometry:
-  Camera:
+  Camera_back:
+    collapsed: false
+  Camera_back_left:
+    collapsed: false
+  Camera_back_right:
+    collapsed: false
+  Camera_front:
+    collapsed: false
+  Camera_front_left:
+    collapsed: false
+  Camera_front_right:
     collapsed: false
   Displays:
     collapsed: false
-  Height: 1022
+  Height: 1016
   Hide Left Dock: false
-  Hide Right Dock: true
-  QMainWindow State: 000000ff00000000fd00000004000000000000015600000218fc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006100fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000017900000218000000d400fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000010f0000029ffc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a0056006900650077007300000000f20000029f000000b500fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b20000000000000000000000020000074800000130fc0100000004fb0000000c00430061006d0065007200610100000000000002830000006b00fffffffb0000000c00430061006d00650072006101000002890000033d0000006b00fffffffb0000000c00430061006d00650072006101000005cc0000017c0000006b00fffffffb0000000a00560069006500770073030000004e00000080000002e100000197000000030000074800000044fc0100000002fb0000000800540069006d0065010000000000000748000002e800fffffffb0000000800540069006d00650100000000000004500000000000000000000005ec0000021800000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Hide Right Dock: false
+  QMainWindow State: 000000ff00000000fd00000004000000000000027f000002c4fc020000000bfb0000001200530065006c0065006300740069006f006e00000001170000007e0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c0061007900730000000117000000ea000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000001600430061006d006500720061005f006200610063006b0100000117000000ac0000002800fffffffb0000002000430061006d006500720061005f006200610063006b005f006c00650066007401000001c9000000db0000002800fffffffb0000002200430061006d006500720061005f006200610063006b005f0072006900670068007401000002aa000001310000002800ffffff000000010000010f00000285fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000011700000285000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b20000000000000000000000020000073a000000d4fc0100000004fb0000001800430061006d006500720061005f00660072006f006e007401000000000000027e0000009300fffffffb0000002200430061006d006500720061005f00660072006f006e0074005f006c006500660074010000028400000206000000b300fffffffb0000002400430061006d006500720061005f00660072006f006e0074005f007200690067006800740100000490000002aa000000bb00fffffffb0000000a00560069006500770073030000004e00000080000002e100000197000000030000073a00000039fc0100000002fb0000000800540069006d006500000000000000073a000002fb00fffffffb0000000800540069006d00650100000000000004500000000000000000000004b5000002c400000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
-    collapsed: false
+    collapsed: true
   Time:
-    collapsed: false
+    collapsed: true
   Tool Properties:
-    collapsed: false
+    collapsed: true
   Views:
     collapsed: true
-  Width: 1864
-  X: 696
-  Y: 216
+  Width: 1850
+  X: 70
+  Y: 27
