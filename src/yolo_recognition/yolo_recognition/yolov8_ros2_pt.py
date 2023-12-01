@@ -7,7 +7,10 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 from custom_interfaces.msg import InferenceResult
 from custom_interfaces.msg import Yolov8Inference
+import logging
+import time
 import torch
+
 bridge = CvBridge()
 class Yolov8_publisher(Node):
     def __init__(self):
@@ -30,8 +33,15 @@ class Yolov8_publisher(Node):
 
     def camera_callback(self, data):
 
+        # Log the latency
+        receive_time = time.monotonic()
+        logging.getLogger('yolo_infer').info("image receive time: {:.6f} s".format(receive_time))
+
         img = bridge.imgmsg_to_cv2(data, "8UC3")
         results = self.model(img, device=0) # cpu=cpu, gpu=0 
+
+        infer_time = time.monotonic()
+        logging.getLogger('yolo_infer').info("image infer time: {:.6f} s".format(infer_time))
 
         self.yolov8_inference.header.frame_id = "base_link"
   
@@ -55,8 +65,27 @@ class Yolov8_publisher(Node):
         img_msg.header = data.header
         self.img_pub.publish(img_msg)
         self.yolov8_pub.publish(self.yolov8_inference)
+
+        box_time = time.monotonic()
+        logging.getLogger('yolo_infer').info("bounding box time: {:.6f} s".format(box_time))
+
         self.yolov8_inference.yolov8_inference.clear()
+
 def main(args=None):
+    # create logger
+    logger = logging.getLogger('yolo_infer')
+    logger.setLevel(logging.INFO)
+    log_dir =  os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'log')
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+    log_path = os.path.join(log_dir, 'yolo_infer_1000_10.log')
+    handler = logging.FileHandler(log_path)
+    handler.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    logger.info('=====================This is the log for Yolov8_publisher node.')
+
     rclpy.init(args=None)
     yolov8_publisher = Yolov8_publisher()
     rclpy.spin(yolov8_publisher)

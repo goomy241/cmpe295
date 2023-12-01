@@ -40,6 +40,9 @@ from pcdet.datasets import DatasetTemplate
 from pcdet.models import build_network, load_data_to_gpu
 from pcdet.utils import common_utils
 
+import logging
+import time
+import os
 
 class PCDetROS(Node):
     """! The PCDetROS class.
@@ -62,11 +65,17 @@ class PCDetROS(Node):
         self.__initObjects__()
     
     def __cloudCB__(self, cloud_msg):
+        receive_time = time.monotonic()
+        logging.getLogger('pcdet_infer').info("image receive time: {:.6f} s".format(receive_time))
+
         out_msg = Detection3DArray()
         cloud_array = ros2_numpy.point_cloud2.pointcloud2_to_array(cloud_msg)
         np_points = self.__convertCloudFormat__(cloud_array)
 
         scores, dt_box_lidar, types = self.__runTorch__(np_points)
+
+        infer_time = time.monotonic()
+        logging.getLogger('pcdet_infer').info("image infer time: {:.6f} s".format(infer_time))
 
         if scores.size != 0:
             for i in range(scores.size):
@@ -105,6 +114,10 @@ class PCDetROS(Node):
         else:
             out_msg.detections = []
             self.__pub_det__.publish(out_msg)
+        
+        # Log the latency
+        box_time = time.monotonic()
+        logging.getLogger('pcdet_infer').info("bounding box time: {:.6f} s".format(box_time))
 
     def __convertCloudFormat__(self, cloud_array, remove_nans=True, dtype=np.float):
         '''
@@ -217,6 +230,20 @@ class PCDetROS(Node):
                                                  10)
 
 def main(args=None):
+    # create logger
+    logger = logging.getLogger('pcdet_infer')
+    logger.setLevel(logging.INFO)
+    log_dir =  os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'log')
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+    log_path = os.path.join(log_dir, 'pcdet_infer_1000_10.log')
+    handler = logging.FileHandler(log_path)
+    handler.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    logger.info('=====================This is the log for PCDetROS node.')
+
     rclpy.init(args=args)
     pcdet_node = PCDetROS()
     rclpy.spin(pcdet_node)
