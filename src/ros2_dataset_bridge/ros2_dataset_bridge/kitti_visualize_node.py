@@ -8,6 +8,8 @@ from .utils.ros_util import ROSInterface
 from sensor_msgs.msg import CameraInfo, Image, PointCloud2
 from visualization_msgs.msg import Marker, MarkerArray
 from std_msgs.msg import String, Int32, Bool, Float32
+import logging
+import time
 
 class KittiVisualizeNode:
     """ Main node for data visualization. Core logic lies in publish_callback.
@@ -183,8 +185,15 @@ class KittiVisualizeNode:
                 return
             self.sequence_index = (self.sequence_index) % length
             
+            # Log the latency
+            read_time = time.monotonic()
+            logging.getLogger('kitti_publisher').info("left image read time: {:.6f} s".format(read_time))
             left_image = cv2.imread(self.meta_dict["left_image"][self.sequence_index])
             self.ros_interface.publish_image(left_image, P2, "/kitti/left_camera/image", frame_id="left_camera")
+
+            pub_time = time.monotonic()
+            logging.getLogger('kitti_publisher').info("left image publish time: {:.6f} s".format(pub_time))
+
             right_image = cv2.imread(self.meta_dict["right_image"][self.sequence_index])
             self.ros_interface.publish_image(right_image, P3, "/kitti/right_camera/image", frame_id="right_camera")
 
@@ -211,6 +220,19 @@ class KittiVisualizeNode:
             self.sequence_index += 1
 
 def main(args=None):
+    # create logger
+    logger = logging.getLogger('kitti_publisher')
+    logger.setLevel(logging.INFO)
+    log_dir =  os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'log')
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+    log_path = os.path.join(log_dir, 'kitti_publisher_1000_10.log')
+    handler = logging.FileHandler(log_path)
+    handler.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    logger.info('=====================This is the log for KittiPublisher node.')
     rclpy.init(args=args)
     KittiVisualizeNode()
 
