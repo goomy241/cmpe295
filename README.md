@@ -24,5 +24,12 @@ colcon build --cmake-clean-cache
 
 6. Run the project
 ```bash
+# publish nuscenes:
+ros2 launch ros2_dataset_bridge nuscenes_launch.xml
+
+# start rviz2:
 ros2 launch cmpe295_bringup display.launch.xml
+
+# start pcdet
+ros2 launch pcdet_ros2 pp_multihead_nds.launch.xml
 ```

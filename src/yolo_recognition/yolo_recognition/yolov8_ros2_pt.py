@@ -45,7 +45,8 @@ class Yolov8_publisher(Node):
         results = self.model(img, device=0) # cpu=cpu, gpu=0 
 
         yolov8_inference = Yolov8Inference()
-        yolov8_inference.header.frame_id = f"base_link_{channel}"
+        yolov8_inference.header.frame_id = "base_link"
+        yolov8_inference.child_frame_id = channel
         yolov8_inference.header.stamp = self.get_clock().now().to_msg()
         # self.yolov8_inference.header = data.header
 
