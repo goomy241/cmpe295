@@ -50,12 +50,12 @@
      <!-- <node pkg="detection_visualizer" exec="detection_visualizer">
      </node> -->
 
-     <!-- <node pkg="yolo_recognition" exec="yolov8_pub">
+     <node pkg="yolo_recognition" exec="yolov8_pub">
           <param name="model_path"
                value="$(var yolo_model_path)" />
-     </node> -->
+     </node>
 
-     <node pkg="pcdet_ros2" exec="pcdet">
+     <!-- <node pkg="pcdet_ros2" exec="pcdet">
           <param name="package_folder_path"
                value="$(find-pkg-share pcdet_ros2)" />
           <param name="namespace"
@@ -82,7 +82,7 @@
                to="$(var openpcdet_input_topic)" />
           <remap from="output"
                to="$(var openpcdet_output_topic)" />
-     </node>
+     </node> -->
 
      <node pkg="rviz2" exec="rviz2" output="screen" 
           args="-d $(var rviz_config_path)" />
