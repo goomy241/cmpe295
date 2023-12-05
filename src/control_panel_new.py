@@ -1,12 +1,12 @@
 from PyQt5.QtCore import Qt, QTimer, QTextCodec, QProcess
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QFrame, QPushButton, QPlainTextEdit, QHBoxLayout, QLabel, QSplitter, QListWidget, QGridLayout
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QFrame, QPushButton, QPlainTextEdit, QHBoxLayout, QLabel, QSplitter, QListWidget, QGridLayout, QAbstractItemView, QCheckBox
 from datetime import datetime
 import gpustat
 import sys
 
 # Set the default font for the application
 from PyQt5.QtGui import QFont
-QApplication.setFont(QFont("Arial", 16))
+QApplication.setFont(QFont("Arial", 20))
 
 class GPUUtilizationMonitor(QWidget):
     def __init__(self):
@@ -17,7 +17,7 @@ class GPUUtilizationMonitor(QWidget):
 
         # Add a title to the GPU Utilization Monitor at the top
         title_label = QLabel('<b>GPU Utilization Monitor</b>', self)
-        title_label.setFont(QFont('Arial', 20))  # Set font size to 20
+        title_label.setFont(QFont('Arial', 24))  # Set font size to 24
         title_label.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
         layout.addWidget(title_label)
 
@@ -60,6 +60,9 @@ class GPUUtilizationMonitor(QWidget):
 class Ros2ListWidget(QListWidget):
     def __init__(self, command, title_label):
         super().__init__()
+
+        # Set the selection mode to allow multi-selection
+        self.setSelectionMode(QAbstractItemView.MultiSelection)
 
         # Set up a QProcess to run the specified command
         self.process = QProcess(self)
@@ -110,19 +113,39 @@ class SimpleMainWindow(QMainWindow):
 
         # Add the 'Node List' title label at row 0, column 0
         node_list_title = QLabel('<b>Activate Node List</b>', self)
-        node_list_title.setFont(QFont('Arial', 20))  # Set font size to 20
+        node_list_title.setFont(QFont('Arial', 24))  # Set font size to 24
         right_side_layout.addWidget(node_list_title, 0, 0)
 
         self.node_list_widget = Ros2ListWidget(['ros2', 'node', 'list'], node_list_title)
 
-        # right_side_layout.addWidget(node_list_title, 0, 0)
+        # Create a QVBoxLayout for the 'Stop' and 'Pause' check buttons at row 1, column 0
+        buttons_layout = QVBoxLayout()
+
+        stop_button = QCheckBox('Stop', self)
+        pause_button = QCheckBox('Pause', self)
+        clear_button = QCheckBox('Clear Node Selection', self)
+
+        buttons_layout.addWidget(stop_button)
+        buttons_layout.addWidget(pause_button)
+        buttons_layout.addWidget(clear_button)
+
+        # Set the buttons_layout as the layout for the buttons section
+        right_side_layout.addLayout(buttons_layout, 1, 1)
+
+        buttons_tp_layout = QVBoxLayout()
+        visualization_button = QCheckBox('Add to Visualization', self)
+        clear_tp_button = QCheckBox('Clear Topic Selection', self)
+
+        buttons_tp_layout.addWidget(visualization_button)
+        buttons_tp_layout.addWidget(clear_tp_button)
+        right_side_layout.addLayout(buttons_tp_layout, 3, 1)
 
         # Add the 'Node List' widget at row 1, column 0
         right_side_layout.addWidget(self.node_list_widget, 1, 0)
 
         # Add the 'Topic List' title label at row 2, column 0
         topic_list_title = QLabel('<b>Topic List</b>', self)
-        topic_list_title.setFont(QFont('Arial', 20))  # Set font size to 20
+        topic_list_title.setFont(QFont('Arial', 24))  # Set font size to 24
         right_side_layout.addWidget(topic_list_title, 2, 0)
 
         self.topic_list_widget = Ros2ListWidget(['ros2', 'topic', 'list'], topic_list_title)
@@ -153,18 +176,19 @@ class SimpleMainWindow(QMainWindow):
         close_button = QPushButton('Close', self)
         close_button.clicked.connect(self.close)
         close_button.setStyleSheet("QPushButton { background-color: red; color: white; }")
-        close_button.setMaximumWidth(100)
-        close_button.setMaximumHeight(30)
-
-        # Add the close button to the central layout
-        close_button.move(self.width() - 150, self.height() - 70)
-        close_button.show()
+        close_button.setFixedSize(150, 50)
+        # right_side_layout.addWidget(close_button, 4, 2)
 
         # Add the 'Refresh' button to the bottom right corner
         self.refresh_button = QPushButton('Refresh', self)
         self.refresh_button.clicked.connect(self.refresh_lists)
-        self.refresh_button.move(self.width() - 300, self.height() - 70)
-        self.refresh_button.show()
+        self.refresh_button.setFixedSize(150, 50)
+        # right_side_layout.addWidget(self.refresh_button, 4, 1)
+
+        horizon_layout = QHBoxLayout()
+        horizon_layout.addWidget(self.refresh_button)
+        horizon_layout.addWidget(close_button)
+        right_side_layout.addLayout(horizon_layout, 4, 0)
 
     def refresh_lists(self):
         # Refresh the data in the right lists (Node List and Topic List)
@@ -194,3 +218,4 @@ if __name__ == '__main__':
     window = SimpleMainWindow()
     window.show()
     sys.exit(app.exec_())
+
