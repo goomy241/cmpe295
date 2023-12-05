@@ -1,12 +1,12 @@
-from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QFrame, QPushButton, QPlainTextEdit, QHBoxLayout, QLabel, QSplitter
+from PyQt5.QtCore import Qt, QTimer, QTextCodec, QProcess
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QFrame, QPushButton, QPlainTextEdit, QHBoxLayout, QLabel, QSplitter, QListWidget, QGridLayout
 from datetime import datetime
 import gpustat
 import sys
 
 # Set the default font for the application
 from PyQt5.QtGui import QFont
-QApplication.setFont(QFont("Arial", 14))
+QApplication.setFont(QFont("Arial", 16))
 
 class GPUUtilizationMonitor(QWidget):
     def __init__(self):
@@ -16,7 +16,8 @@ class GPUUtilizationMonitor(QWidget):
         layout = QVBoxLayout(self)
 
         # Add a title to the GPU Utilization Monitor at the top
-        title_label = QLabel('GPU Utilization Monitor', self)
+        title_label = QLabel('<b>GPU Utilization Monitor</b>', self)
+        title_label.setFont(QFont('Arial', 20))  # Set font size to 20
         title_label.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
         layout.addWidget(title_label)
 
@@ -56,6 +57,26 @@ class GPUUtilizationMonitor(QWidget):
         except Exception as e:
             print(f"Error retrieving GPU information: {e}")
 
+class Ros2ListWidget(QListWidget):
+    def __init__(self, command, title_label):
+        super().__init__()
+
+        # Set up a QProcess to run the specified command
+        self.process = QProcess(self)
+        self.process.setProcessChannelMode(QProcess.MergedChannels)
+        self.process.readyReadStandardOutput.connect(self.read_output)
+
+        self.process.start(command[0], command[1:])
+
+    def read_output(self):
+        # Read and decode the standard output of the process
+        output = QTextCodec.codecForMib(106).toUnicode(self.process.readAllStandardOutput())
+        item_list = output.split('\n')  # Fix the split function
+
+        # Clear existing items before adding new ones
+        self.clear()
+
+        self.addItems(item_list)
 
 class SimpleMainWindow(QMainWindow):
     def __init__(self):
@@ -65,6 +86,7 @@ class SimpleMainWindow(QMainWindow):
         self.setWindowTitle('Pipeline Controller')
         self.setGeometry(100, 100, 2000, 1200)
 
+        # --------------- left half ---------------------------
         # Create a central widget and layout for the main window
         central_widget = QWidget(self)
         self.setCentralWidget(central_widget)
@@ -72,33 +94,45 @@ class SimpleMainWindow(QMainWindow):
         # Create a QHBoxLayout to organize widgets horizontally
         central_layout = QHBoxLayout(central_widget)
 
-        # # Add a separator line (QFrame) between left and right halves
-        # separator_line = QFrame(self)
-        # separator_line.setFrameShape(QFrame.VLine)
-        # separator_line.setFrameShadow(QFrame.Sunken)
-        # separator_line.setStyleSheet("color: gray; border: 1px solid gray;")
-
         # Create a GPU Utilization Monitor widget for the left half
         gpu_monitor_widget = GPUUtilizationMonitor()
 
         # Add the QTextBrowser and GPU Utilization Monitor to the left half
         central_layout.addWidget(gpu_monitor_widget, stretch=2)
 
-        # # Add the separator line between left and right halves
-        # central_layout.addWidget(separator_line)
+        # --------------- right half ---------------------------
 
         # Create a widget for the right half
         right_widget = QWidget(self)
-        right_layout = QVBoxLayout(right_widget)
 
-        # Add a label to the right half
-        right_label = QLabel('Right', self)
-        right_label.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-        right_layout.addWidget(right_label)
+        # Create a QGridLayout for the right side
+        right_side_layout = QGridLayout()
 
-        # Add the right widget to the right half
-        central_layout.addWidget(right_widget, stretch=1)
+        # Add the 'Node List' title label at row 0, column 0
+        node_list_title = QLabel('<b>Activate Node List</b>', self)
+        node_list_title.setFont(QFont('Arial', 20))  # Set font size to 20
+        right_side_layout.addWidget(node_list_title, 0, 0)
 
+        self.node_list_widget = Ros2ListWidget(['ros2', 'node', 'list'], node_list_title)
+
+        # right_side_layout.addWidget(node_list_title, 0, 0)
+
+        # Add the 'Node List' widget at row 1, column 0
+        right_side_layout.addWidget(self.node_list_widget, 1, 0)
+
+        # Add the 'Topic List' title label at row 2, column 0
+        topic_list_title = QLabel('<b>Topic List</b>', self)
+        topic_list_title.setFont(QFont('Arial', 20))  # Set font size to 20
+        right_side_layout.addWidget(topic_list_title, 2, 0)
+
+        self.topic_list_widget = Ros2ListWidget(['ros2', 'topic', 'list'], topic_list_title)
+        # Add the 'Topic List' widget at row 3, column 0
+        right_side_layout.addWidget(self.topic_list_widget, 3, 0)
+
+        # Set the right_side_layout as the layout for the right_widget
+        right_widget.setLayout(right_side_layout)
+
+        # ------------------------------------------------
         # Create a QSplitter for organizing widgets
         splitter = QSplitter(Qt.Horizontal)
 
@@ -107,7 +141,7 @@ class SimpleMainWindow(QMainWindow):
         splitter.addWidget(right_widget)
 
         # Set the initial sizes of the widgets in the splitter
-        splitter.setSizes([int(self.width() * 0.7), int(self.width() * 0.3)])
+        splitter.setSizes([int(self.width() * 0.3), int(self.width() * 0.7)])
 
         # Set the style for the splitter
         splitter.setStyleSheet("QSplitter::handle { background-color: gray; border: 1px solid gray; }")
@@ -123,7 +157,37 @@ class SimpleMainWindow(QMainWindow):
         close_button.setMaximumHeight(30)
 
         # Add the close button to the central layout
-        central_layout.addWidget(close_button, alignment=Qt.AlignBottom | Qt.AlignRight)
+        close_button.move(self.width() - 150, self.height() - 70)
+        close_button.show()
+
+        # Add the 'Refresh' button to the bottom right corner
+        self.refresh_button = QPushButton('Refresh', self)
+        self.refresh_button.clicked.connect(self.refresh_lists)
+        self.refresh_button.move(self.width() - 300, self.height() - 70)
+        self.refresh_button.show()
+
+    def refresh_lists(self):
+        # Refresh the data in the right lists (Node List and Topic List)
+        for widget in [self.node_list_widget, self.topic_list_widget]:
+            # Terminate the existing process if running
+            widget.process.terminate()
+            widget.process.waitForFinished()
+
+            # Create a new process to run the respective command
+            new_process = QProcess(self)
+            new_process.setProcessChannelMode(QProcess.MergedChannels)
+            new_process.readyReadStandardOutput.connect(widget.read_output)
+
+            # Construct the command and start the new process
+            command = [widget.process.program()] + widget.process.arguments()
+            new_process.start(command[0], command[1:])
+            
+            # Assign the new process to the widget
+            widget.process = new_process
+
+            # Clear existing items before adding new ones
+            widget.clear()
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
